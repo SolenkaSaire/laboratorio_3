@@ -1,5 +1,7 @@
 package util;
 
+import integrity.Hasher;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -108,7 +110,7 @@ public class Files {
         }
 
         PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-        out.println(files.length);  // Enviar el número de archivos que se van a transferir
+        out.println(files.length + 1);  // Enviar el número de archivos que se van a transferir
 
         for (File file : files) {
             if (file.isFile()) {
@@ -116,6 +118,10 @@ public class Files {
                 sendFile(file.getPath(), socket);  // Enviar el archivo
             }
         }
+
+        Hasher.generateIntegrityCheckerFile(folderName, "sha256sum.txt");
+
+        sendFile("sha256sum.txt", socket);
 
         out.println("FIN");  // Señal de que se terminó de enviar todos los archivos
     }
