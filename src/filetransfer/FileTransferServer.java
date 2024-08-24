@@ -4,6 +4,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 import echo.EchoServer;
+import integrity.Hasher;
 import util.Files;
 
 public class FileTransferServer {
@@ -36,10 +37,13 @@ public class FileTransferServer {
     }
 
     public void protocol(Socket socket) throws Exception {
-        //Files.receiveFile("Docs", socket);
-        //Files.sendFile("Eiffel.jpg", socket);
-        Files.receiveFolder("Docs", socket);
-        Files.sendFolder("Download", socket);
+        String folderNameToSend = "prueba1";
+        String folderNameToReceive = "Docs";
+
+       // Files.receiveFolder(folderNameToReceive, socket);
+       // Files.sendFolder(folderNameToSend, socket);
+
+        Hasher.generateIntegrityFile( folderNameToSend, "Download/sha256sum.txt");
     }
 
     public static void main(String[] args) throws Exception{

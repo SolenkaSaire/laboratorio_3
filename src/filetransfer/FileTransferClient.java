@@ -2,6 +2,7 @@ package filetransfer;
 
 import java.net.Socket;
 
+import integrity.Hasher;
 import util.Files;
 
 public class FileTransferClient {
@@ -36,10 +37,15 @@ public class FileTransferClient {
     }
 
     public void protocol(Socket socket) throws Exception {
-        //Files.sendFile("scan.pdf", socket);
-        //Files.receiveFile("Download", socket);
-        Files.sendFolder("binaryfiles", socket);
-        Files.receiveFolder("DownloadClient", socket);
+        String folderNameToSend = "prueba2";
+        String folderNameToReceive = "Download";
+
+
+       // Files.sendFolder(folderNameToSend, socket);
+       // Files.receiveFolder(folderNameToReceive, socket);
+
+        Hasher.generateIntegrityFile( folderNameToSend, "Docs/sha256sum.txt");
+
     }
 
     public static void main(String[] args) throws Exception {
