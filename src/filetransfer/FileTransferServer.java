@@ -36,8 +36,10 @@ public class FileTransferServer {
     }
 
     public void protocol(Socket socket) throws Exception {
-        Files.receiveFile("Docs", socket);
-        Files.sendFile("Eiffel.jpg", socket);
+        //Files.receiveFile("Docs", socket);
+        //Files.sendFile("Eiffel.jpg", socket);
+        Files.receiveFolder("Docs", socket);
+        Files.sendFolder("Download", socket);
     }
 
     public static void main(String[] args) throws Exception{

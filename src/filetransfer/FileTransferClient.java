@@ -36,8 +36,10 @@ public class FileTransferClient {
     }
 
     public void protocol(Socket socket) throws Exception {
-        Files.sendFile("scan.pdf", socket);
-        Files.receiveFile("Download", socket);
+        //Files.sendFile("scan.pdf", socket);
+        //Files.receiveFile("Download", socket);
+        Files.sendFolder("binaryfiles", socket);
+        Files.receiveFolder("DownloadClient", socket);
     }
 
     public static void main(String[] args) throws Exception {

@@ -21,7 +21,9 @@ public class Files {
         System.out.println("Size: " + size);
 
         PrintWriter printWriter = new PrintWriter(socket.getOutputStream(), true);
-        printWriter.println(filename);
+        printWriter.println(localFile.getName());
+
+        System.out.println("localFile.getName(): " + localFile.getName());
 
         printWriter.println("Size:" + size);
 
@@ -43,6 +45,7 @@ public class Files {
     }
 
     public static String receiveFile(String folder, Socket socket) throws Exception {
+        System.out.println("Folder Name: " + folder);
         File fd = new File (folder);
         if (fd.exists()==false) {
             fd.mkdir();
@@ -54,6 +57,8 @@ public class Files {
 
         String filename = reader.readLine();
         filename = folder + File.separator + filename;
+
+        System.out.println("File Name: " + filename);
 
         BufferedOutputStream toFile = new BufferedOutputStream(new FileOutputStream(filename));
 
@@ -90,4 +95,52 @@ public class Files {
     public static void pause(int miliseconds) throws Exception {
         Thread.sleep(miliseconds);
     }
+
+    public static void sendFolder(String folderName, Socket socket) throws Exception {
+        File folder = new File(folderName);
+        if (!folder.exists() || !folder.isDirectory()) {
+            throw new IllegalArgumentException("La carpeta no existe o no es un directorio.");
+        }
+
+        File[] files = folder.listFiles();
+        if (files == null || files.length == 0) {
+            throw new IllegalArgumentException("La carpeta está vacía.");
+        }
+
+        PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+        out.println(files.length);  // Enviar el número de archivos que se van a transferir
+
+        for (File file : files) {
+            if (file.isFile()) {
+                //out.println(file.getName());  // Enviar el nombre del archivo
+                sendFile(file.getPath(), socket);  // Enviar el archivo
+            }
+        }
+
+        out.println("FIN");  // Señal de que se terminó de enviar todos los archivos
+    }
+
+    public static void receiveFolder(String folderName, Socket socket) throws Exception {
+        File folder = new File(folderName);
+        if (!folder.exists()) {
+            folder.mkdir();  // Crear la carpeta si no existe
+        }
+
+        BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        int fileCount = Integer.parseInt(in.readLine());  // Leer el número de archivos a recibir
+        System.out.println("FileCount :" + fileCount);
+
+        for (int i = 0; i < fileCount; i++) {
+            //String fileName = in.readLine();  // Recibir el nombre del archivo
+            //System.out.println("FIlename :" + fileName);
+            receiveFile(folder.getPath(), socket);  // Recibir el archivo y guardarlo en la carpeta
+        }
+
+        String endSignal = in.readLine();  // Leer la señal de finalización
+        if ("FIN".equals(endSignal)) {
+            System.out.println("Recepción de carpeta completada.");
+        }
+    }
+
+
 }
